@@ -157,19 +157,19 @@ function http_post($url, $body){
 }
 
 // ************** TESTING **************
-get_auth_token();
-$data = array('new' => "example...?");
-post_to_firebase(json_encode($data));
+// get_auth_token();
+// $data = array('new' => "example...?");
+// post_to_firebase(json_encode($data));
 
-// $tracer = new PhpEpsolarTracer('/dev/ttyXRUSB0');
+$tracer = new PhpEpsolarTracer('/dev/ttyXRUSB0');
 
-// if ($tracer->getRealtimeData()) {
-// 		$json = build_json_data($tracer->realtimeData);
-// 		post_to_firebase($json);
-// 	} 
-// else {
-// 	print "Cannot get RealTime Data\n";
-// 	post_to_firebase("Cannot get RealTime Data");
-// }
+if ($tracer->getRealtimeData()) {
+		$json = build_json_data($tracer->realtimeData);
+		post_to_firebase($json);
+	} 
+else {
+	print "Cannot get RealTime Data\n";
+	post_to_firebase("Cannot get RealTime Data");
+}
 
 ?>
