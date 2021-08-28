@@ -65,7 +65,7 @@
 		# sudo rmmod cdc-acm
 		# sudo modprobe -r usbserial
 		# sudo modprobe usbserial
-		# sudo xr_usb_serial_common 
+		# cd /home/pi/repo/epsolar-tracer/xr_usb_serial_common-1a
 		# sudo rmmod ./xr_usb_serial_common.ko
 		# sudo insmod ./xr_usb_serial_common.ko
 
@@ -74,10 +74,21 @@
 		* sudo apt-get install raspberrypi-kernel-headers
 		* reboot
 
- 		*  sudo chmod 666 /dev/ttyUSB0 <- permissions
+		 *  sudo chmod 666 /dev/ttyUSB0 <- permissions
+		 * 
+		 * allow writing to config file
+		 * sudo chmod 666 /home/pi/repo/PhpEpsolarTracer/
+		 * 
+		 * load driver on boot
+		 * sudo cp /home/pi/repo/epsolar-tracer/xr_usb_serial_common-1a/xr_usb_serial_common.ko /lib/modules/$(uname -r)/kernel/drivers/
+		 * echo 'xr_usb_serial_common' | sudo tee -a /etc/modules
  * 
  * GENERATE FIREBASE TOKEN
  * https://console.firebase.google.com/u/0/project/cabin-3bebb/settings/serviceaccounts/adminsdk
+ * 
+ * 
+ * crontab -e
+ *   *_/5 * * * * php /home/pi/repo/PhpEpsolarTracer/post_solar_stats.php <-- remove the underscore
  */
  
 require_once 'PhpEpsolarTracer.php';
