@@ -20,6 +20,9 @@
  *
  * It queries and prints all charger controller's registries
  *
+ * ########################################################################
+ * ### DO NOT PLUG IN THE CHARGE CONTROLLER UNTIL DRIVERS ARE INSTALLED ###
+ * ########################################################################
  * lsusb
  * Bus 001 Device 006: ID 04e2:1411 Exar Corp. 
  * 
@@ -31,13 +34,25 @@
  * https://github.com/toggio/PhpEpsolarTracer/issues/4
  * 
  * 
+ * git clone https://github.com/RPi-Distro/rpi-source.git
+ * cd ~/repo/rpi-source
+ * rpi-source <-- run this to recompile headers before building driver (next step)
+ * 
  * get Exar USB Serial Driver driver files from: https://github.com/kasbert/epsolar-tracer/tree/master/xr_usb_serial_common-1a
 
- * sudo apt-get install dkms raspberrypi-kernel-headers  
- * 	sudo cp -a ../xr_usb_serial_common-1a /usr/src/
- *	dkms add -m xr_usb_serial_common -v 1a
- *  dkms build -m xr_usb_serial_common -v 1a
- *  dkms install -m xr_usb_serial_common -v 1a
+ * git clone https://github.com/kasbert/epsolar-tracer.git <-- for xr_usb_serial_common
+ * cd ~/repo/epsolar-tracer/xr_usb_serial_common-1a
+ * make
+ *
+ * 
+ * 	sudo cp -a ./xr_usb_serial_common-1a /usr/src/
+ *	sudo dkms add -m xr_usb_serial_common -v 1a
+ *  sudo dkms build -m xr_usb_serial_common -v 1a
+ *  sudo dkms install -m xr_usb_serial_common -v 1a
+ * 
+
+ * 
+ * https://www.raspberrypi.org/forums/viewtopic.php?t=171225
  * 
 	Tips for Debugging
 	------------------
@@ -47,13 +62,19 @@
 		# ls /dev/tty*
 
 		To remove the CDC-ACM driver and install the driver:
+		# sudo rmmod cdc-acm
+		# sudo modprobe -r usbserial
+		# sudo modprobe usbserial
+		# sudo xr_usb_serial_common 
+		# sudo rmmod ./xr_usb_serial_common.ko
+		# sudo insmod ./xr_usb_serial_common.ko
 
-		# rmmod cdc-acm
-		# modprobe -r usbserial
-		# modprobe usbserial
-		# insmod ./xr_usb_serial_common.ko
+		* ###### reinstall raspberrypi-bootloader raspberrypi-kernel #####
+		* sudo apt-get update && sudo apt-get install 
+		* sudo apt-get install raspberrypi-kernel-headers
+		* reboot
 
- *  sudo chmod 666 /dev/ttyUSB0 <- permissions
+ 		*  sudo chmod 666 /dev/ttyUSB0 <- permissions
  * 
  * GENERATE FIREBASE TOKEN
  * https://console.firebase.google.com/u/0/project/cabin-3bebb/settings/serviceaccounts/adminsdk
