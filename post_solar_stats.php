@@ -143,7 +143,8 @@ function post_to_firebase($content, $configs){
 		error_log($message);
 	}
 	else {
-		print("successfully posted to firebase\r\n");
+		$message = "successfully posted to firebase";
+		error_log($message);
 		var_dump($response);
 	}
 }
