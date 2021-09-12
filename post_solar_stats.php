@@ -212,9 +212,7 @@ $configs = include('config.php');
 $configs['auth_failures'] = 0;
 write_to_config($configs);
 
-$tracer = null;  //new PhpEpsolarTracer('/dev/ttyXRUSB0');
-
-post_to_firebase("bogus", $configs);
+$tracer = new PhpEpsolarTracer('/dev/ttyXRUSB0');
 
 if ($tracer->getRealtimeData()) {
 		$json = build_json_data($tracer->realtimeData);
