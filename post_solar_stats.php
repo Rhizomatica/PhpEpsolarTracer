@@ -116,10 +116,9 @@ function build_json_data($real_time_data){
 	return json_encode($data);
 }
 
-function post_to_firebase($content){
-
-	$configs = include('config.php');
+function post_to_firebase($content, $configs){
 	$auth_token = $configs["auth_token"];
+	$auth_failures = $configs["auth_failures"];
 
 	// /2020-01-24.json
 	$local_time = new DateTime("now", new DateTimeZone('America/Chicago'));
@@ -129,10 +128,19 @@ function post_to_firebase($content){
 
 	$response = http_post($url, $content);
 
-	if (isset($response["error"])){
+	if (isset($response["error"]) && $auth_failures < 3 ){
+		$configs['auth_failures'] = $auth_failures + 1;
+		write_to_config($configs);
+
+
+		error_log("auth failures: {$auth_failures}");
 		error_log("error posting to firebase, re-authenticating. Error: " . implode(" ", $response), 0);
-		get_auth_token();
-		post_to_firebase($content);
+		$new_config = get_auth_token($configs);
+		post_to_firebase($content, $new_config);
+	}
+	else if ($auth_failures > 2){
+		$message = "**** too many auth failures, quitting ****";
+		error_log($message);
 	}
 	else {
 		print("successfully posted to firebase\r\n");
@@ -140,10 +148,7 @@ function post_to_firebase($content){
 	}
 }
 
-function get_auth_token(){
-
-	$configs = include('config.php');
-	
+function get_auth_token($configs){
 	$web_api_key = $configs["web_api_key"];
 	$authUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$web_api_key";
 
@@ -159,8 +164,8 @@ function get_auth_token(){
 
 	// write new auth token to config
 	$configs['auth_token'] = $firebase_auth_response["idToken"];
-	file_put_contents('config.php', '<?php return ' . var_export($configs, true) . ';');
-
+	write_to_config($configs);
+	return $configs;
 }
 
 function http_post($url, $body){
@@ -188,16 +193,32 @@ function http_post($url, $body){
 	}
 }
 
+function write_to_config($configs) {
+	try {
+		file_put_contents('config.php', '<?php return ' . var_export($configs, true) . ';');
+	}
+	catch (Exception $e) {
+		$error_message =  $e->getMessage();
+		error_log("Error writing to config file: {$error_message}");
+	}
+}
+
 // ************** TESTING **************
 // get_auth_token();
 // $data = array('new' => "example...?");
 // post_to_firebase(json_encode($data));
 
-$tracer = new PhpEpsolarTracer('/dev/ttyXRUSB0');
+$configs = include('config.php');
+$configs['auth_failures'] = 0;
+write_to_config($configs);
+
+$tracer = null;  //new PhpEpsolarTracer('/dev/ttyXRUSB0');
+
+post_to_firebase("bogus", $configs);
 
 if ($tracer->getRealtimeData()) {
 		$json = build_json_data($tracer->realtimeData);
-		post_to_firebase($json);
+		post_to_firebase($json, $configs);
 	} 
 else {
 	print "Cannot get RealTime Data\n";
