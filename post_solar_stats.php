@@ -89,6 +89,8 @@
  * 
  * crontab -e
  *   *_/5 * * * * php /home/pi/repo/PhpEpsolarTracer/post_solar_stats.php <-- remove the underscore
+ * 
+ * errors written to: /var/log/cron.log
  */
  
 require_once 'PhpEpsolarTracer.php';
@@ -128,7 +130,7 @@ function post_to_firebase($content, $configs){
 
 	$response = http_post($url, $content);
 
-	if (isset($response["error"]) && $auth_failures < 3 ){
+	if (isset($response["error"]) && isset($auth_failures) && $auth_failures < 3 ){
 		$configs['auth_failures'] = $auth_failures + 1;
 		write_to_config($configs);
 
@@ -138,7 +140,7 @@ function post_to_firebase($content, $configs){
 		$new_config = get_auth_token($configs);
 		post_to_firebase($content, $new_config);
 	}
-	else if ($auth_failures > 2){
+	else if (!isset($auth_failures) || $auth_failures > 2){
 		$message = "**** too many auth failures, quitting ****";
 		error_log($message);
 	}
