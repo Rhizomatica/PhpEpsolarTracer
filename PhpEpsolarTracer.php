@@ -26,6 +26,7 @@
  */
  
 require_once 'PhpSerialModbus.php';
+require_once 'CRC16.php';
 
 class PhpEpsolarTracer
 {
@@ -354,4 +355,15 @@ class PhpEpsolarTracer
 		if (count($this->discreteData) != 2) return 0;
 		return 1;
 	}
+
+    public function setCoilData ($coil, $value) {
+        $coilBytes = chr(($coil >> 8) & 0xFF) . chr($coil & 0xFF);
+        $valueBytes = $value ? "\xff\x00" : "\x00\x00";
+        $msgBytes = "\x01\x05".$coilBytes.$valueBytes;
+        $crc = CRC16::calculate($msgBytes);
+        $crcBytes = chr($crc & 0xFF).chr(($crc >> 8) & 0xFF);
+        $this->tracer->sendRawQuery($msgBytes.$crcBytes,false);
+        return 1;
+    }
+
 }
