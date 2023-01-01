@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/PhpEpsolarTracer/example-app/static/css/main.8c3b25f6.chunk.css",
+    "main.js": "/PhpEpsolarTracer/example-app/static/js/main.a158ec53.chunk.js",
+    "main.js.map": "/PhpEpsolarTracer/example-app/static/js/main.a158ec53.chunk.js.map",
+    "runtime-main.js": "/PhpEpsolarTracer/example-app/static/js/runtime-main.66408916.js",
+    "runtime-main.js.map": "/PhpEpsolarTracer/example-app/static/js/runtime-main.66408916.js.map",
+    "static/js/2.79e560aa.chunk.js": "/PhpEpsolarTracer/example-app/static/js/2.79e560aa.chunk.js",
+    "static/js/2.79e560aa.chunk.js.map": "/PhpEpsolarTracer/example-app/static/js/2.79e560aa.chunk.js.map",
+    "index.html": "/PhpEpsolarTracer/example-app/index.html",
+    "static/css/main.8c3b25f6.chunk.css.map": "/PhpEpsolarTracer/example-app/static/css/main.8c3b25f6.chunk.css.map",
+    "static/js/2.79e560aa.chunk.js.LICENSE.txt": "/PhpEpsolarTracer/example-app/static/js/2.79e560aa.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.66408916.js",
+    "static/js/2.79e560aa.chunk.js",
+    "static/css/main.8c3b25f6.chunk.css",
+    "static/js/main.a158ec53.chunk.js"
+  ]
+}
